@@ -1,0 +1,85 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Artwork</title>
+
+<style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+    }
+
+    body{
+        background:black;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        width:100vw;
+        height:100vh;
+        overflow:hidden;
+        cursor:pointer;
+        font-family:Arial, sans-serif;
+    }
+
+    img{
+        max-width:100%;
+        max-height:100%;
+        object-fit:contain;
+        transition:opacity 0.6s ease;
+    }
+
+    .hint{
+        position:fixed;
+        bottom:30px;
+        color:white;
+        font-size:14px;
+        opacity:0.7;
+        letter-spacing:1px;
+    }
+</style>
+</head>
+
+<body>
+
+<img id="artwork" src="original_artwork.png">
+
+<div class="hint">
+Tap to Transform
+</div>
+
+<script>
+
+const artwork = document.getElementById("artwork");
+
+let state = 0;
+
+const images = [
+    "original_artwork.png",
+    "result_artwork.png"
+];
+
+document.body.addEventListener("click", () => {
+
+    artwork.style.opacity = 0;
+
+    setTimeout(() => {
+
+        state = (state + 1) % images.length;
+
+        artwork.src = images[state];
+
+        artwork.style.opacity = 1;
+
+    }, 300);
+
+});
+
+</script>
+
+</body>
+</html>
+```
