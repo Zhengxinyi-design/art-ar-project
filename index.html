@@ -214,6 +214,7 @@ const hint = document.getElementById("hint");
 const music = document.getElementById("music");
 
 let state = 0;
+let musicStarted = false;
 
 const images = [
     "original_artwork.png",
@@ -223,16 +224,22 @@ const images = [
 music.volume = 0;
 
 setTimeout(() => {
-    music.volume = 0.15;
-    music.play();
-
     loader.style.opacity = 0;
     setTimeout(() => {
         loader.style.display = "none";
     }, 800);
 }, 2800);
 
+function startMusic(){
+    if(!musicStarted){
+        music.play();
+        musicStarted = true;
+    }
+}
+
 function fadeToVolume(targetVolume){
+    startMusic();
+
     const fade = setInterval(() => {
         if(Math.abs(music.volume - targetVolume) < 0.03){
             music.volume = targetVolume;
@@ -271,7 +278,7 @@ function updateText(){
             <br><br>
             By transforming the visual narrative, the work shifts women from passive subjects of representation to active agents with voice, autonomy, and power.
             <br><br>
-            It reflects on gender inequality, the reclaiming of identity, and the continuing struggle for women's rights and self-determination.
+            Rather than being defined by violence or victimhood, women are presented as individuals capable of shaping their own stories.
             <br><br>
             <em>Who gets to tell women's stories?</em>
         `;
@@ -299,4 +306,3 @@ document.body.addEventListener("click", () => {
 
 </body>
 </html>
-```
