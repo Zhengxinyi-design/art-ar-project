@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,52 +6,101 @@
 <title>Interactive Artwork</title>
 
 <style>
-    *{
-        margin:0;
-        padding:0;
-        box-sizing:border-box;
-    }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-    body{
-        background:black;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        width:100vw;
-        height:100vh;
-        overflow:hidden;
-        cursor:pointer;
-        font-family:Arial, sans-serif;
-    }
+body{
+    background:black;
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    font-family:Arial, sans-serif;
+    color:white;
+}
 
-    img{
-        max-width:100%;
-        max-height:100%;
-        object-fit:contain;
-        transition:opacity 0.6s ease;
-    }
+#loader{
+    position:fixed;
+    inset:0;
+    background:black;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    z-index:10;
+    transition:opacity 0.8s ease;
+}
 
-    .hint{
-        position:fixed;
-        bottom:30px;
-        color:white;
-        font-size:14px;
-        opacity:0.7;
-        letter-spacing:1px;
-    }
+.loader-title{
+    font-size:18px;
+    letter-spacing:2px;
+    margin-bottom:20px;
+}
+
+.loader-bar{
+    width:220px;
+    height:3px;
+    background:rgba(255,255,255,0.2);
+    overflow:hidden;
+}
+
+.loader-progress{
+    width:0%;
+    height:100%;
+    background:white;
+    animation:loading 2.5s ease forwards;
+}
+
+@keyframes loading{
+    from{width:0%;}
+    to{width:100%;}
+}
+
+#main{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:100vw;
+    height:100vh;
+    cursor:pointer;
+}
+
+img{
+    max-width:100%;
+    max-height:100%;
+    object-fit:contain;
+    transition:opacity 0.6s ease;
+}
+
+.hint{
+    position:fixed;
+    bottom:30px;
+    color:white;
+    font-size:14px;
+    opacity:0.7;
+    letter-spacing:1px;
+}
 </style>
 </head>
 
 <body>
 
-<img id="artwork" src="original_artwork.png">
+<div id="loader">
+    <div class="loader-title">Loading AR Experience...</div>
+    <div class="loader-bar">
+        <div class="loader-progress"></div>
+    </div>
+</div>
 
-<div class="hint">
-Tap to Transform
+<div id="main">
+    <img id="artwork" src="original_artwork.png">
+    <div class="hint">Tap to Transform</div>
 </div>
 
 <script>
-
+const loader = document.getElementById("loader");
 const artwork = document.getElementById("artwork");
 
 let state = 0;
@@ -62,24 +110,25 @@ const images = [
     "result_artwork.png"
 ];
 
+setTimeout(() => {
+    loader.style.opacity = 0;
+    setTimeout(() => {
+        loader.style.display = "none";
+    }, 800);
+}, 2800);
+
 document.body.addEventListener("click", () => {
+    if(loader.style.display !== "none") return;
 
     artwork.style.opacity = 0;
 
     setTimeout(() => {
-
         state = (state + 1) % images.length;
-
         artwork.src = images[state];
-
         artwork.style.opacity = 1;
-
     }, 300);
-
 });
-
 </script>
 
 </body>
 </html>
-```
