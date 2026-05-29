@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,11 +7,7 @@
 <title>Interactive Artwork</title>
 
 <style>
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
+*{margin:0;padding:0;box-sizing:border-box;}
 
 body{
     background:#050505;
@@ -127,9 +124,7 @@ body{
 }
 
 @media(max-width:800px){
-    body{
-        overflow:auto;
-    }
+    body{overflow:auto;}
 
     #main{
         height:auto;
@@ -205,7 +200,7 @@ body{
 
 </div>
 
-<div class="hint" id="hint">Tap to Transform</div>
+<div class="hint" id="hint">Tap to Reveal a New Perspective</div>
 
 <audio id="music" src="music.mp3" loop></audio>
 
@@ -229,35 +224,27 @@ const images = [
 music.volume = 0;
 
 setTimeout(() => {
+    music.volume = 0.15;
+    music.play();
+
     loader.style.opacity = 0;
     setTimeout(() => {
         loader.style.display = "none";
     }, 800);
 }, 2800);
 
-function fadeInMusic(){
-    music.play();
-    let volume = music.volume;
+function fadeToVolume(targetVolume){
     const fade = setInterval(() => {
-        if(volume < 0.6){
-            volume += 0.05;
-            music.volume = Math.min(volume, 0.6);
-        }else{
+        if(Math.abs(music.volume - targetVolume) < 0.03){
+            music.volume = targetVolume;
             clearInterval(fade);
+            return;
         }
-    }, 100);
-}
 
-function fadeOutMusic(){
-    let volume = music.volume;
-    const fade = setInterval(() => {
-        if(volume > 0){
-            volume -= 0.05;
-            music.volume = Math.max(volume, 0);
+        if(music.volume < targetVolume){
+            music.volume = Math.min(music.volume + 0.03, targetVolume);
         }else{
-            music.pause();
-            music.currentTime = 0;
-            clearInterval(fade);
+            music.volume = Math.max(music.volume - 0.03, targetVolume);
         }
     }, 100);
 }
@@ -275,8 +262,8 @@ function updateText(){
             <br><br>
             Many scholars believe that her experiences influenced works such as <em>Judith Slaying Holofernes</em>, making them enduring symbols of resistance, justice, and female strength.
         `;
-        hint.innerHTML = "Tap to Transform";
-        fadeOutMusic();
+        hint.innerHTML = "Tap to Reveal a New Perspective";
+        fadeToVolume(0.15);
     }else{
         title.innerHTML = "Reclaiming the Narrative";
         meta.innerHTML = "Contemporary Feminist Reinterpretation";
@@ -286,9 +273,11 @@ function updateText(){
             By transforming the visual narrative, the work shifts women from passive subjects of representation to active agents with voice, autonomy, and power.
             <br><br>
             It reflects on gender inequality, the reclaiming of identity, and the continuing struggle for women's rights and self-determination.
+            <br><br>
+            <em>Who gets to tell women's stories?</em>
         `;
-        hint.innerHTML = "Tap Again to Return";
-        fadeInMusic();
+        hint.innerHTML = "Tap to Return to the Original";
+        fadeToVolume(0.5);
     }
 }
 
