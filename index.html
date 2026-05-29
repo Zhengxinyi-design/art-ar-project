@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,18 +14,18 @@
 }
 
 body{
-    background:black;
+    background:#050505;
+    color:white;
     width:100vw;
     height:100vh;
     overflow:hidden;
-    font-family:Arial, sans-serif;
-    color:white;
+    font-family:Arial, Helvetica, sans-serif;
 }
 
 #loader{
     position:fixed;
     inset:0;
-    background:black;
+    background:#050505;
     display:flex;
     flex-direction:column;
     justify-content:center;
@@ -34,9 +35,9 @@ body{
 }
 
 .loader-title{
-    font-size:18px;
+    font-size:16px;
     letter-spacing:2px;
-    margin-bottom:20px;
+    margin-bottom:18px;
 }
 
 .loader-bar{
@@ -59,28 +60,112 @@ body{
 }
 
 #main{
-    display:flex;
-    justify-content:center;
-    align-items:center;
     width:100vw;
     height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:38px;
+    padding:40px;
     cursor:pointer;
 }
 
-img{
+.image-panel{
+    width:58%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+#artwork{
     max-width:100%;
     max-height:100%;
     object-fit:contain;
     transition:opacity 0.6s ease;
 }
 
+.text-panel{
+    width:34%;
+    max-width:430px;
+    max-height:86vh;
+    overflow-y:auto;
+    padding:28px;
+    border:1px solid rgba(255,255,255,0.22);
+    background:rgba(255,255,255,0.06);
+    backdrop-filter:blur(8px);
+    transition:opacity 0.6s ease;
+}
+
+#title{
+    font-size:24px;
+    line-height:1.2;
+    margin-bottom:16px;
+}
+
+.meta{
+    font-size:13px;
+    line-height:1.6;
+    opacity:0.72;
+    margin-bottom:22px;
+    letter-spacing:0.4px;
+}
+
+#description{
+    font-size:14px;
+    line-height:1.75;
+    opacity:0.9;
+}
+
 .hint{
     position:fixed;
-    bottom:30px;
-    color:white;
-    font-size:14px;
-    opacity:0.7;
-    letter-spacing:1px;
+    bottom:24px;
+    left:50%;
+    transform:translateX(-50%);
+    font-size:13px;
+    opacity:0.65;
+    letter-spacing:1.5px;
+}
+
+@media(max-width:800px){
+    body{
+        overflow:auto;
+    }
+
+    #main{
+        height:auto;
+        min-height:100vh;
+        flex-direction:column;
+        gap:20px;
+        padding:26px 18px 70px;
+    }
+
+    .image-panel{
+        width:100%;
+        height:auto;
+    }
+
+    #artwork{
+        max-height:58vh;
+    }
+
+    .text-panel{
+        width:100%;
+        max-width:100%;
+        max-height:none;
+        padding:22px;
+    }
+
+    #title{
+        font-size:21px;
+    }
+
+    .hint{
+        bottom:18px;
+        background:rgba(0,0,0,0.45);
+        padding:8px 14px;
+        border-radius:20px;
+    }
 }
 </style>
 </head>
@@ -95,13 +180,45 @@ img{
 </div>
 
 <div id="main">
-    <img id="artwork" src="original_artwork.png">
-    <div class="hint">Tap to Transform</div>
+
+    <div class="image-panel">
+        <img id="artwork" src="original_artwork.png" alt="Artwork">
+    </div>
+
+    <div class="text-panel" id="textPanel">
+        <h1 id="title">Judith Slaying Holofernes</h1>
+
+        <div class="meta" id="meta">
+            Artemisia Gentileschi<br>
+            c. 1612–1613 · Italy
+        </div>
+
+        <div id="description">
+            This painting depicts the biblical story of Judith beheading the Assyrian general Holofernes. Through dramatic composition and powerful imagery, Gentileschi presents Judith not as a passive figure, but as a determined woman taking action.
+            <br><br>
+            Artemisia Gentileschi (1593–1656) was one of the most important painters of the Baroque period and among the first women to gain international recognition as a professional artist.
+            <br><br>
+            As a young woman, she survived sexual violence and endured a public trial that forced her to defend her own innocence. Despite these challenges, she continued her artistic career and established herself in a male-dominated art world.
+            <br><br>
+            Many scholars believe that her experiences influenced works such as <em>Judith Slaying Holofernes</em>, making them enduring symbols of resistance, justice, and female strength.
+        </div>
+    </div>
+
 </div>
+
+<div class="hint" id="hint">Tap to Transform</div>
+
+<audio id="music" src="music.mp3" loop></audio>
 
 <script>
 const loader = document.getElementById("loader");
 const artwork = document.getElementById("artwork");
+const textPanel = document.getElementById("textPanel");
+const title = document.getElementById("title");
+const meta = document.getElementById("meta");
+const description = document.getElementById("description");
+const hint = document.getElementById("hint");
+const music = document.getElementById("music");
 
 let state = 0;
 
@@ -110,6 +227,8 @@ const images = [
     "result_artwork.png"
 ];
 
+music.volume = 0;
+
 setTimeout(() => {
     loader.style.opacity = 0;
     setTimeout(() => {
@@ -117,18 +236,80 @@ setTimeout(() => {
     }, 800);
 }, 2800);
 
+function fadeInMusic(){
+    music.play();
+    let volume = music.volume;
+    const fade = setInterval(() => {
+        if(volume < 0.6){
+            volume += 0.05;
+            music.volume = Math.min(volume, 0.6);
+        }else{
+            clearInterval(fade);
+        }
+    }, 100);
+}
+
+function fadeOutMusic(){
+    let volume = music.volume;
+    const fade = setInterval(() => {
+        if(volume > 0){
+            volume -= 0.05;
+            music.volume = Math.max(volume, 0);
+        }else{
+            music.pause();
+            music.currentTime = 0;
+            clearInterval(fade);
+        }
+    }, 100);
+}
+
+function updateText(){
+    if(state === 0){
+        title.innerHTML = "Judith Slaying Holofernes";
+        meta.innerHTML = "Artemisia Gentileschi<br>c. 1612–1613 · Italy";
+        description.innerHTML = `
+            This painting depicts the biblical story of Judith beheading the Assyrian general Holofernes. Through dramatic composition and powerful imagery, Gentileschi presents Judith not as a passive figure, but as a determined woman taking action.
+            <br><br>
+            Artemisia Gentileschi (1593–1656) was one of the most important painters of the Baroque period and among the first women to gain international recognition as a professional artist.
+            <br><br>
+            As a young woman, she survived sexual violence and endured a public trial that forced her to defend her own innocence. Despite these challenges, she continued her artistic career and established herself in a male-dominated art world.
+            <br><br>
+            Many scholars believe that her experiences influenced works such as <em>Judith Slaying Holofernes</em>, making them enduring symbols of resistance, justice, and female strength.
+        `;
+        hint.innerHTML = "Tap to Transform";
+        fadeOutMusic();
+    }else{
+        title.innerHTML = "Reclaiming the Narrative";
+        meta.innerHTML = "Contemporary Feminist Reinterpretation";
+        description.innerHTML = `
+            This reinterpretation revisits <em>Judith Slaying Holofernes</em> through a contemporary feminist lens.
+            <br><br>
+            By transforming the visual narrative, the work shifts women from passive subjects of representation to active agents with voice, autonomy, and power.
+            <br><br>
+            It reflects on gender inequality, the reclaiming of identity, and the continuing struggle for women's rights and self-determination.
+        `;
+        hint.innerHTML = "Tap Again to Return";
+        fadeInMusic();
+    }
+}
+
 document.body.addEventListener("click", () => {
     if(loader.style.display !== "none") return;
 
     artwork.style.opacity = 0;
+    textPanel.style.opacity = 0;
 
     setTimeout(() => {
         state = (state + 1) % images.length;
         artwork.src = images[state];
+        updateText();
+
         artwork.style.opacity = 1;
-    }, 300);
+        textPanel.style.opacity = 1;
+    }, 350);
 });
 </script>
 
 </body>
 </html>
+```
